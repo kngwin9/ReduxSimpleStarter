@@ -1,15 +1,22 @@
 import React, { Component } from 'react';
 
 class SearchBar extends Component {
-  render() {    // To find a function on a class, every class must have a render(){};
-      return <input onChange={this.onInputChange} />; // Create a new input and pass it a property on change.
+    constructor(props /*an argument*/) {
+        super(props);   //
+        this.state = {term:''}; //  Creating a new object and setting it to state
+}
 
+  render() {    // To find a function on a class, every class must have a render(){};\
+      return (
+          <div>
+          <input
+              value={this.state.term}
+              onChange={(event /*an argument*/) => this.setState({term:event.target.value})}/>
+              <br/>
+              Value of the input: {this.state.term}
+          </div>
+      );
   }
-
-  onInputChange(event /*adding an argument, describes the context or information*/ ) {
-
-  }
-
 }
 
 export default SearchBar;
