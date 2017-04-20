@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import _ from 'lodash';
 import YTSearch from 'youtube-api-search';
 import SearchBar from './components/search_bar';
 import VideoList from './components/video_list';
@@ -12,22 +13,39 @@ const API_KEY = "AIzaSyAe-u8ixNnyeY8jY0lchpkBAfnCKslzMkc";
 class App extends Component {
     constructor(props){
         super(props);
+        this.state = {
+            videos:[],
+            selectedVideo: null
+        };
 
-        this.state = { videos:[] };
+        // Refactored the Youtube search in to its own method
+        this.videoSearch('surfboards');
 
-        // Youtube search
-        YTSearch ({ key: API_KEY, term: 'surfboards' }, (videos) => {
-            this.setState({ videos })
+    }
+
+    videoSearch(term){
+        YTSearch ({ key: API_KEY, term: term }, (videos) => {
+            this.setState({
+                videos: videos,
+                selectedVideo: videos[0]
+            })
             // this.setState ({ videos: videos})
         });
     }
 
     render() {
+
+        //  Using Lodash
+        //  Created a function, passed it to debounce, debounce then takes the inner function and returns a new function that can only be called once every 300 milliseconds.
+        const videoSearch = _.debounce((term) => { this.videoSearch(term)}, 300);
+
         return (
         <div>
-            <SearchBar/>
-            <VideoDetail video={ this.state.videos[0] }/>
-            <VideoList videos={ this.state.videos }/>
+            <SearchBar onSearchTermChange={ term => this.videoSearch(term)}/>
+            <VideoDetail video={ this.state.selectedVideo }/>
+            <VideoList
+                onVideoSelect={selectedVideo => this.setState({ selectedVideo })}
+                videos={ this.state.videos }/>
         </div>
         );
     }
